@@ -27,12 +27,12 @@ alias home_mod{
     # verify # of arguments
     if (size(@_) < 3)
 	{
-		berror($1, beacon_command_detail("homedir_modify"));
+		berror($1, beacon_command_detail("home_mod"));
 		return;
 	}
 	
     # read in BOF file
-    $handle = openf(script_resource("homedirbof.o"));
+    $handle = openf(script_resource("home_mod.o"));
     $data = readb($handle, -1);
     closef($handle);
 
